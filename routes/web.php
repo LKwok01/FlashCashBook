@@ -14,3 +14,6 @@ Route::get('/contact', function () {
     $title = 'Contact Us';
     return view('welcome',compact('title'));
 });
+Route::get('/catalog', function () {
+    return view('catalogm');
+})->name('catalog');
