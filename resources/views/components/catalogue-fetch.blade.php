@@ -11,19 +11,12 @@ new class extends Component
     public $description = '';
     public $price = '';
     public $is_active = true;
+    public $filter = 'all'; // 'all', 'active', 'inactive'
 
     public function mount()
     {
         $this->loadItems();
     }
-
-    public function loadItems()
-    {
-        $this->items = Item::with('activePrice')
-            ->orderBy('item_name')
-            ->get();
-    }
-
     public function addItem()
     {
         $this->validate([
@@ -57,12 +50,41 @@ new class extends Component
         $item?->update(['is_active' => !$item->is_active]);
         $this->loadItems();
     }
+    public function updatedFilter()
+    {
+        $this->loadItems();
+    }
+    public function loadItems()
+    {
+        $query = Item::with('activePrice')->orderBy('item_name');
+        if ($this->filter === 'active') {
+            $query->where('is_active', true);
+        } elseif ($this->filter === 'inactive') {
+            $query->where('is_active', false);
+        }
+        $this->items = $query->get();
+    }
 };
 
 ?>
 
 <div>
     <h1 class="text-3xl font-bold text-gray-800 border-b border-gray-300 pb-1 mb-4">Catalog</h1>
+
+    <div class="flex gap-2 mb-4">
+        <button wire:click="$set('filter', 'all')"
+                class="px-3 py-1 rounded text-sm {{ $filter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200' }}">
+            All
+        </button>
+        <button wire:click="$set('filter', 'active')"
+                class="px-3 py-1 rounded text-sm {{ $filter === 'active' ? 'bg-green-500 text-white' : 'bg-gray-200' }}">
+            Active
+        </button>
+        <button wire:click="$set('filter', 'inactive')"
+                class="px-3 py-1 rounded text-sm {{ $filter === 'inactive' ? 'bg-red-500 text-white' : 'bg-gray-200' }}">
+            Inactive
+        </button>
+    </div>
 
     <div x-data="{ show: false }" @close-form.window="show = false" class="mb-6">
         <button @click="show = !show"
