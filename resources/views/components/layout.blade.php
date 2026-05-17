@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ isset($title) ? 'FlashCash - ' . $title : 'FlashCash' }}</title>
+    @livewireStyles
     @vite(['resources/css/app.css'])
 </head>
 <body class="flex min-h-screen">
@@ -23,6 +24,6 @@
     {{$slot}}
     </main>
 
-
+    @livewireScripts
 </body>
 </html>
